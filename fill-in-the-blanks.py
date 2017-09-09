@@ -136,6 +136,55 @@ def update_player_status(lives, score, points, isCorrect):
             points -= 1
     return lives, score, points
 
+def nearby_blank(word, start, maxKey, toRight):
+    number = 0
+    prod = 1
+    if(toRight):
+        while start < len(word) and word[start] == '_':
+            number += 10 * number + (int)(word[start])
+            start += 1
+        if start < len(word) and number <= maxKey and word[start] == '_':
+            return True
+    else:
+        while start >= 0 and word[start].isdigit():
+            number += prod * int(word[start])
+            prod *= 10
+            start -= 1
+        if start >=0 and number <= maxKey and word[start] == '_':
+            return True
+    return False
+    
+def left_blank_edge(word, start, maxKey):
+    while start >= 0 and word[start] == '_':
+        start -= 1
+    if start < 0:
+        return 0
+    if nearby_blank(word, start, maxKey, False):
+        return start + 2
+    return start + 1
+
+def right_blank_edge(word, start, maxKey):
+    while start < len(word) and word[start] == '_':
+        start += 1
+    if start >= len(word):
+        return len(word) - 1
+    if nearby_blank(word, start, maxKey, False):
+        return start -2
+    return start - 1
+
+def replace_blank(word, target, newString, maxKey):
+    startIndex = 0
+    findPosition = 0
+    while True:
+        findPosition = word.find(target, startIndex)
+        if findPosition == -1:
+            break
+        print "word = " + word
+        print "target = " + target
+        kk = raw_input("pula= ")
+        startIndex = findPosition + len(target)
+        print findPosition
+
 def update_game(words, answer, index):
     target = "_" + str(index + 1) + "_"
     #print target
@@ -217,7 +266,12 @@ def play_game(sentences, answers):
 #print "There are %d births" % (births,)
 #print "There are ", births, "births"
 
-play_game(mySentences, myAnswers)
+#c="12k"
+#print c[2].isdigit()
+print left_blank_edge("ggg_____1__",7,100)
+print right_blank_edge("__1_ok_",3,100)
+#print replace_blank("cacamacapulaca","ca","gay",14)
+#play_game(mySentences, myAnswers)
         
 
     
