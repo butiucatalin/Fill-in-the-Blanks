@@ -7,7 +7,9 @@ from collections import OrderedDict
 
 NUMBER_OF_GUESSES = 5
 
-practice_sentences = ["_1_ test _____2__. --__3__??? + == .._____4_\n!?_?___5___."]
+BLANKS_LIMIT = 1000
+
+practice_sentences = ["_1_ test _____2__. --__3__??? + == .._____4_\n!?_?___5___6_"]
 
 easy_sentences = ["\nIn ___1_, function blocks begin with the keyword _2_ and are \
 followed by the _3_ name and _4_."]
@@ -23,18 +25,18 @@ insane_sentences = ["_1_ _2_ _3_ _4_ _5_", \
                     "_1_?_2_?_3_?_4_?_5_", \
                     "?_1_?_2_?_3_?_4_?_5_?" ]
 
-practice_answers = [["a", "b", "c", "d", "e"]]
+practice_answers = [[["yes1" , "yes2"], ["b"], ["c"], ["d","dd","ddd"], ["e"] ,["pula"]]]
 
-easy_answers = [["a", "b", "c", "d"]]
+easy_answers = [[["a"], ["b"], ["c"], ["d"]]]
 
-medium_answers = [["a", "b", "c", "d"]]
+medium_answers = [[["a"], ["b"], ["c"], ["d"]]]
 
-hard_answers = [["a", "b", "c", "d"]]
+hard_answers = [[["a"], ["b"], ["c"], ["d"]]]
 
-insane_answers = [["a1", "b", "c", "d", "e"], \
-                  ["a", "b2", "c", "d", "e"], \
-                  ["a", "b", "c3", "d", "e"], \
-                  ["a", "b", "c", "d4", "e"]]
+insane_answers = [[["a1"], ["b"], ["c"], ["d"], ["e"]], \
+                  [["a"], ["b2"], ["c"], ["d"], ["e"]], \
+                  [["a"], ["b"], ["c3"], ["d"], ["e"]], \
+                  [["a"], ["b"], ["c"], ["d4"], ["e"]]]
 
 #print easy_sentence
 
@@ -118,12 +120,16 @@ def get_player_input(number):
                          + str(number + 1) + "_ ?  ")
     return response
 
+def print_current_score(score, points):
+    current = "Your current score is : %d\n" %(score + points)
+    if points == 1:
+        print "Correct ! \nYou won 1 point ! " + current
+    else:
+        print "Correct ! \nYou won %d points ! " % (points) + current
+
 def update_player_status(lives, score, points, isCorrect):
     if isCorrect == True:
-        if points == 1:
-            print "Correct ! \nYou won 1 point !\n"
-        else:
-            print "Correct ! \nYou won %d points !\n" % (points)
+        print_current_score(score, points)
         lives = NUMBER_OF_GUESSES
         score += points
         points = lives
@@ -136,68 +142,82 @@ def update_player_status(lives, score, points, isCorrect):
             points -= 1
     return lives, score, points
 
-def nearby_blank(word, start, maxKey, toRight):
+def nearby_blank(word, start, maxBlank, toRight):
     number = 0
     prod = 1
     if(toRight):
-        while start < len(word) and word[start] == '_':
-            number += 10 * number + (int)(word[start])
+        while start < len(word) and word[start].isdigit() and number<maxBlank:
+            number = 10 * number + (int)(word[start])
             start += 1
-        if start < len(word) and number <= maxKey and word[start] == '_':
+        #print "unum " + str(number)
+        if start < len(word) and number <= maxBlank and word[start] == '_':
             return True
     else:
-        while start >= 0 and word[start].isdigit():
+        while start >= 0 and word[start].isdigit() and number<maxBlank:
             number += prod * int(word[start])
             prod *= 10
             start -= 1
-        if start >=0 and number <= maxKey and word[start] == '_':
+        #print "unum " + str(number)
+        if start >=0 and number <= maxBlank and word[start] == '_':
             return True
     return False
     
-def left_blank_edge(word, start, maxKey):
+def left_blank_edge(word, start, maxBlank):
     while start >= 0 and word[start] == '_':
         start -= 1
     if start < 0:
         return 0
-    if nearby_blank(word, start, maxKey, False):
+    if nearby_blank(word, start, maxBlank, False):
         return start + 2
     return start + 1
 
-def right_blank_edge(word, start, maxKey):
+def right_blank_edge(word, start, maxBlank):
     while start < len(word) and word[start] == '_':
         start += 1
     if start >= len(word):
         return len(word) - 1
-    if nearby_blank(word, start, maxKey, False):
+    if nearby_blank(word, start, maxBlank, True):
         return start -2
     return start - 1
 
-def replace_blank(word, target, newString, maxKey):
+def replace_blank(word, target, newString, maxBlank):
     startIndex = 0
     findPosition = 0
     while True:
         findPosition = word.find(target, startIndex)
         if findPosition == -1:
             break
-        print "word = " + word
-        print "target = " + target
-        kk = raw_input("pula= ")
-        startIndex = findPosition + len(target)
-        print findPosition
+        #print "word = " + word[startIndex:]
+        #print "target = " + target
+        leftIndex = left_blank_edge(word, findPosition, maxBlank)
+        #print "leftIndex = " + str(leftIndex)
+        rightIndex = right_blank_edge(word, \
+                                      findPosition + len(target) -1 , maxBlank)
+        #print "rightIndex = " + str(rightIndex)
+        word = word[:leftIndex] + newString + word[(rightIndex + 1):]
+        startIndex = leftIndex + len(newString)
+        #print word + " start = " + str(startIndex)
+    return word
+        #startIndex = findPosition + len(target)
+        #print findPosition
 
-def update_game(words, answer, index):
-    target = "_" + str(index + 1) + "_"
+def found_in(words, target):
+    for word in words:
+        if word.find(target) != -1:
+            return True
+    return False
+
+def update_game(words, target, answer, theAnswer, index):
     #print target
     #print "WORDS = \n"
     #print words
     for i in range(0, len(words)):
         #print words[i]
-        if words[i].find(target) != -1:
-            #print 'gasit'
-            word = words[i].replace(target, answer[index], 1)
-            words[i] = word
-            #print word
-            #print words[i]
+        #print 'gasit'
+        words[i] = replace_blank(words[i], target, \
+                                 theAnswer, min(BLANKS_LIMIT, len(answer)))
+        #print word
+        #print words[i]
     #print "WORDS = \n"
     #print words
     return index + 1
@@ -210,6 +230,12 @@ def game_result(words, score, lives):
         print_paragraph(" ".join(words), False)
         return score
 
+def check_answer(answer, index):
+    response = get_player_input(index).lower()
+    if response in answer[index]:
+        return True, response
+    return False, None
+
 def play(sentence, answer):
     index = 0
     score = 0 
@@ -217,21 +243,25 @@ def play(sentence, answer):
     words = sentence.split()
     #print words
     while index < len(answer) and lives > 0:
-        print_paragraph(" ".join(words))
-        answerIsGood = answer[index].lower() == get_player_input(index).lower()
-        lives, score, points = update_player_status( \
+        target = "_" + str(index + 1) + "_"
+        if found_in(words, target):
+            print_paragraph(" ".join(words))
+            answerIsGood, theAnswer = check_answer(answer, index)
+            lives, score, points = update_player_status( \
                                lives, score, points, answerIsGood)
-        if answerIsGood == True:
-            index = update_game(words, answer, index)
+            if answerIsGood == True:
+                index = update_game(words, target, answer, theAnswer, index)
+        else:
+            index += 1
     return game_result(words, score, lives)
 
-def print_score(score):
+def print_final_score(score):
     if score == 1:
         print "Congratulations ! You won ! \n" \
-                  + "Your score is : 1 point . \n"
+                  + "Your final score is : 1 point . \n"
     else:
         print "Congratulations ! You won ! \n" \
-                  + "Your score is : %d points . \n" % (score)
+                  + "Your final score is : %d points . \n" % (score)
 
 def play_game(sentences, answers):
     """ Doctrgings
@@ -247,7 +277,7 @@ def play_game(sentences, answers):
             break
         score = play(sentences[level][variant], answers[level][variant])
         if score != None:
-            print_score(score) 
+            print_final_score(score) 
         if not keep_playing():
             break
     print "\nGoodbye !"
@@ -268,10 +298,14 @@ def play_game(sentences, answers):
 
 #c="12k"
 #print c[2].isdigit()
-print left_blank_edge("ggg_____1__",7,100)
-print right_blank_edge("__1_ok_",3,100)
-#print replace_blank("cacamacapulaca","ca","gay",14)
-#play_game(mySentences, myAnswers)
+#print left_blank_edge("_7_______1__",8,100)
+#print right_blank_edge("__1__25_",3,100)
+#print "_1_2_1___ma_1____pula1_1___________"
+#ss=["abc","aka","pula"]
+#cc="pula"
+#print cc in ss
+#print replace_blank("_1_2_1___ma_1____pula1_1___________","_1_","piciu",14)
+play_game(mySentences, myAnswers)
         
 
     
