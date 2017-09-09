@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 #print 'ana are mere'
 
-NUMBER_OF_GUESSES = 5
+NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES = 5
 
 MAX_POINTS = 5
 
@@ -179,6 +179,11 @@ myAnswers = {
              "insane"   : insane_answers,
             }
 
+lifeVariations = {
+                  "hard"   : -1,
+                  "insane" : -2,
+                  }
+
 def keep_playing():
     choice = raw_input("Do you want to start a new game ? (y/n) : ")
     while choice.lower() != 'y' and choice.lower() != 'n':
@@ -209,7 +214,6 @@ def choose_level(sentences):
         else:
             print "That's not an option !"
     print "You've chosen " + level + " !\n"
-    print "You will get %d guesses per problem .\n" % (NUMBER_OF_GUESSES)
     return level, randint(0, len(sentences[level]) - 1)
 
 def valid_data(sentences, answers):
@@ -250,7 +254,13 @@ def print_current_score(score, points):
     else:
         print "Correct ! \nYou won %d points ! " % (points) + current
 
-def init_player_stats():
+def init_player_stats(level):
+    global NUMBER_OF_GUESSES
+    if level in lifeVariations:
+        NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES + lifeVariations[level]
+    else:
+        NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES
+    print "You will get %d guesses per problem .\n" % (NUMBER_OF_GUESSES)
     return 0, MAX_POINTS, NUMBER_OF_GUESSES
 
 def update_player_stats(lives, score, points, isCorrect):
@@ -363,9 +373,9 @@ def check_answer(answer, index):
             return True, anAnswer
     return False, None
 
-def play(sentence, answer):
+def play(sentence, answer, level):
     index = 0
-    score, points, lives = init_player_stats()
+    score, points, lives = init_player_stats(level)
     words = sentence.split()
     #print words
     while index < len(answer) and lives > 0:
@@ -401,7 +411,7 @@ def play_game(sentences, answers):
         #print variant
         if not exist_answers(answers[level], variant):
             break
-        score = play(sentences[level][variant], answers[level][variant])
+        score = play(sentences[level][variant], answers[level][variant], level)
         if score != None:
             print_final_score(score) 
         if not keep_playing():
@@ -432,7 +442,13 @@ def play_game(sentences, answers):
 #print cc in ss
 #print replace_blank("_1_2_1___ma_1____pula1_1___________","_1_","piciu",14)
 play_game(mySentences, myAnswers)
-        
+#x = 10
+#def globallyChange():
+    #global x
+    #x = 45
+    #return x
+#globallyChange() #You've to call the function for changes.
+#print x       
 
     
     
