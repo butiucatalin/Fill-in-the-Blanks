@@ -79,10 +79,14 @@ hard_sentences = ["__1__ is an __2__ __3__. That means that, unlike " \
                 "example of this. It's really quite __5__ because a lot of " \
                 "number __12__ it does isn't actualy done by __1__!"]
 
-insane_sentences = ["_1_ _2_ _3_ _4_ _5_", \
-                    "_1_ ? _2_ ? _3_ ? _4_ ? _5_", \
-                    "_1_?_2_?_3_?_4_?_5_", \
-                    "?_1_?_2_?_3_?_4_?_5_?" ]
+insane_sentences = ["Use _1_2____ when you aren't sure how many __3__ are " \
+                  "going to be passed to a __4__, or if we want to pass a " \
+                  "sorted list or __5__ of __3__ to a __4__. _1_1_6____ is " \
+                  "used when we don't know how many __7__ __3__ will be " \
+                  "passed to a __4__, or it can be used to pass values of a " \
+                  "__8__ as __7__ __3__. The identifiers ____2_ and ____6_ " \
+                  "are a convention, you could also use _1_9____ and " \
+                  "_1_1_10_____ but that would not be wise."]
 
 practice_answers = [[["operating system", "OS"],
                      ["hardware"],
@@ -156,10 +160,16 @@ hard_answers = [[["Python"],
                  ["crunching"]]]
                  
 
-insane_answers = [[["a1"], ["b"], ["c"], ["d"], ["e"]], \
-                  [["a"], ["b2"], ["c"], ["d"], ["e"]], \
-                  [["a"], ["b"], ["c3"], ["d"], ["e"]], \
-                  [["a"], ["b"], ["c"], ["d4"], ["e"]]]
+insane_answers = [[["*"],
+                   ["args"],
+                   ["arguments"],
+                   ["function"],
+                   ["tuple"],
+                   ["kwargs"],
+                   ["keyword"],
+                   ["dictionary"],
+                   ["bob"],
+                   ["billy"]]]
 
 #print easy_sentence
 
