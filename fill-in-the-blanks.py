@@ -3,15 +3,11 @@
 from random import randint
 from collections import OrderedDict
 
-#print 'ana are mere'
-
 NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES = 5
 
 MAX_POINTS = 5
 
 BLANKS_LIMIT = 1000
-
-#practice_sentences = ["_1_ test _____2__. --__3__??? + == .._____4_\n!?_?___5___6_"]
 
 practice_sentences = ["The _____1_____ is the program that manages the " \
                     "___2___ of the computer system, including the CPU, " \
@@ -109,8 +105,6 @@ practice_answers = [[["operating system", "OS"],
                      ["i"],
                      ["Phones"]]]
 
-#practice_answers = [[["Yes1" , "yes2"], ["b"], ["c"], ["d","dd","ddd"], ["e"] ,["Pula"]]]
-
 easy_answers = [[["world"],
                  ["Python"],
                  ["print"],
@@ -171,8 +165,6 @@ insane_answers = [[["*"],
                    ["bob"],
                    ["billy"]]]
 
-#print easy_sentence
-
 mySentences = OrderedDict([
              ("practice" , practice_sentences),
              ("easy"     , easy_sentences),
@@ -214,7 +206,6 @@ def choice_message(sentences):
     message = message + " and " + myKeys[index] + ".\n"
     return message
         
-
 def choose_level(sentences):
     while True:
         level = raw_input("Please select a game difficulty by typing it in !" \
@@ -237,8 +228,6 @@ def valid_data(sentences, answers):
 
 def exist_answers(answerList, number):
     try:
-        #print len(answerList)
-        #print number
         assert (len(answerList) > number and len(answerList[number]) > 0)
         return True
     except AssertionError:
@@ -295,7 +284,6 @@ def nearby_blank(word, start, maxBlank, toRight):
         while start < len(word) and word[start].isdigit() and number<maxBlank:
             number = 10 * number + (int)(word[start])
             start += 1
-        #print "unum " + str(number)
         if start < len(word) and number <= maxBlank and word[start] == '_':
             return True
     else:
@@ -303,7 +291,6 @@ def nearby_blank(word, start, maxBlank, toRight):
             number += prod * int(word[start])
             prod *= 10
             start -= 1
-        #print "unum " + str(number)
         if start >=0 and number <= maxBlank and word[start] == '_':
             return True
     return False
@@ -333,19 +320,12 @@ def replace_blank(word, target, newString, maxBlank):
         findPosition = word.find(target, startIndex)
         if findPosition == -1:
             break
-        #print "word = " + word[startIndex:]
-        #print "target = " + target
         leftIndex = left_blank_edge(word, findPosition, maxBlank)
-        #print "leftIndex = " + str(leftIndex)
         rightIndex = right_blank_edge(word, \
                                       findPosition + len(target) -1 , maxBlank)
-        #print "rightIndex = " + str(rightIndex)
         word = word[:leftIndex] + newString + word[(rightIndex + 1):]
         startIndex = leftIndex + len(newString)
-        #print word + " start = " + str(startIndex)
     return word
-        #startIndex = findPosition + len(target)
-        #print findPosition
 
 def found_in(words, target):
     for word in words:
@@ -354,18 +334,9 @@ def found_in(words, target):
     return False
 
 def update_game(words, target, answer, theAnswer, index):
-    #print target
-    #print "WORDS = \n"
-    #print words
     for i in range(0, len(words)):
-        #print words[i]
-        #print 'gasit'
         words[i] = replace_blank(words[i], target, \
                                  theAnswer, min(BLANKS_LIMIT, len(answer)))
-        #print word
-        #print words[i]
-    #print "WORDS = \n"
-    #print words
     return index + 1
 
 def game_result(words, score, lives):
@@ -387,7 +358,6 @@ def play(sentence, answer, level):
     index = 0
     score, points, lives = init_player_stats(level)
     words = sentence.split()
-    #print words
     while index < len(answer) and lives > 0:
         target = "_" + str(index + 1) + "_"
         if found_in(words, target):
@@ -418,7 +388,6 @@ def play_game(sentences, answers):
     while True:
         print "\nNew game starting .... Good luck !\n"
         level, variant = choose_level(sentences)
-        #print variant
         if not exist_answers(answers[level], variant):
             break
         score = play(sentences[level][variant], answers[level][variant], level)
@@ -428,37 +397,6 @@ def play_game(sentences, answers):
             break
     print "\nGoodbye !"
 
-#try:
-    #assert "birthday cake" == "ice cream cake"
-#except AssertionError:
-    #print 'Houston, we have a problem.'
-    #raise
-
-#x = 'aaaa'
-#y = 'bbb'
-
-# assert(x==y)
-
-#print "There are %d births" % (births,)
-#print "There are ", births, "births"
-
-#c="12k"
-#print c[2].isdigit()
-#print left_blank_edge("_7_______1__",8,100)
-#print right_blank_edge("__1__25_",3,100)
-#print "_1_2_1___ma_1____pula1_1___________"
-#ss=["abc","aka","pula"]
-#cc="pula"
-#print cc in ss
-#print replace_blank("_1_2_1___ma_1____pula1_1___________","_1_","piciu",14)
 play_game(mySentences, myAnswers)
-#x = 10
-#def globallyChange():
-    #global x
-    #x = 45
-    #return x
-#globallyChange() #You've to call the function for changes.
-#print x       
-
     
     
