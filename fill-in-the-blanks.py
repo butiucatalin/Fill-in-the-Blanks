@@ -7,31 +7,154 @@ from collections import OrderedDict
 
 NUMBER_OF_GUESSES = 5
 
+MAX_POINTS = 5
+
 BLANKS_LIMIT = 1000
 
-practice_sentences = ["_1_ test _____2__. --__3__??? + == .._____4_\n!?_?___5___6_"]
+#practice_sentences = ["_1_ test _____2__. --__3__??? + == .._____4_\n!?_?___5___6_"]
 
-easy_sentences = ["\nIn ___1_, function blocks begin with the keyword _2_ and are \
-followed by the _3_ name and _4_."]
+practice_sentences = ["The _____1_____ is the program that manages the " \
+                    "___2___ of the computer system, including the CPU, " \
+                    "memory, storage devices, and input/output devices. " \
+                    "A __3_____ gathers data, processes it, outputs the " \
+                    "data or information, and _4_ the data or information.",
+                      "The binary language consists of two digits: " \
+                    "_1_ and _2_.  ___3___ __4____ is the science that " \
+                    "attempts to create machines that will emulate " \
+                    "the human ____5_____ process.",
+                      "When you connect to the __1_______, your computer " \
+                    "is communicating with a ______2_ at your Internet " \
+                    "service provider (_3_). Next, name 3 diferent " \
+                    "network protocols: __4_,_5__ and __6__.",
+                      "Let's have some fun ! Name an operating system " \
+                    "composed of three leters : _1_2_3_ . _4__5_____ " \
+                    "are using that operating system !"]
 
-medium_sentences = ["\n_1_ are the essential _2_ that lets us execute a series \
-of _3_ as many _4_ as we want."]
+easy_sentences = ["A common first thing to do in a __6__ is display "\
+                "'Hello __1__!'  In __2__ this is particularly easy; all " \
+                "you have to do is type in: __3__ \"Hello __1__!\" " \
+                "Of course, that isn't a very useful thing to do. However, " \
+                "it is an example of how to output to the user using the " \
+                "__3__ command, and produces a program which does something, " \
+                "so it is useful in that capacity. It may seem a bit odd " \
+                "to do something in a __5__ complete __6__ that can be " \
+                "done even more easily with an __4__ file in a browser, but " \
+                "it's a step in learning __2__ syntax, and that's really its " \
+                "purpose.",
+                  "Python is a high __1__ , interpreted and object-oriented " \
+                "language . __2__ are for programmers for better " \
+                "understanding of the program . In Python , a __3__ name can " \
+                "start with an underscore. The statement using \'and\' " \
+                "operator results true if both operands are __4__."]
 
-hard_sentences = ["\n_1_ expressions use the _2_ character to indicate special _3_ \
-or to allow special characters to be used without _4_ their special meaning."]
+medium_sentences = ["Python has full support for object-__1__ programming " \
+                  "including user-defined __2__, inheritance, and " \
+                  "run-time binding of __3__. Python has an extensive " \
+                  "standard __4__, which is one of the main reasons for " \
+                  "its popularity. Python was first created in __5__ 1989",
+                    "A __1__ is created with the def keyword . You specify " \
+                  "the inputs a __1__ takes by adding __2__ separated by " \
+                  "commas between the parantheses. __1__s by default " \
+                  "returns __3__ if you don't specity the vale to return. "\
+                  "The __2__ can be standard data types such as string, " \
+                  "integer, dictionary, tuple, and __4__ or cand be more " \
+                  "complicated such as objects and lambda functions."]
+
+hard_sentences = ["__1__ is an __2__ __3__. That means that, unlike " \
+                "__3__s like C and its variants, __1__ does not need to be " \
+                "compiled before it is run. Other __2__ languages include PHP" \
+                " and __4__.__1__ is dynamically __5__d, this means that you " \
+                "don't need to state the __5__s of __6__ when you declare " \
+                "them or anything tike that. __1__ is well suited to object " \
+                "__7__ programming in that it allows the __8__ of classes " \
+                "along with composition and __9__ . __1__ does not have " \
+                "__10__ specifiers(like __11__'s piblic , private) .",
+                  "In __1__, __2__ are first-__3__ objects. This mean that " \
+                "they can be assigned to __4__, returned from other __2__ " \
+                "and passed into __2__; __3__es are also first __3__ " \
+                "objects. Writing __1__ code is __5__ but __6__ it is often " \
+                "slower than __7__ languages . Fortunately, __1__ allows the "
+                "inclusion of __8__ based __9__ so bottlenecks can be " \
+                "__10__ away and often are . The numpy __11__ is a good " \
+                "example of this. It's really quite __5__ because a lot of " \
+                "number __12__ it does isn't actualy done by __1__!"]
 
 insane_sentences = ["_1_ _2_ _3_ _4_ _5_", \
                     "_1_ ? _2_ ? _3_ ? _4_ ? _5_", \
                     "_1_?_2_?_3_?_4_?_5_", \
                     "?_1_?_2_?_3_?_4_?_5_?" ]
 
-practice_answers = [[["yes1" , "yes2"], ["b"], ["c"], ["d","dd","ddd"], ["e"] ,["pula"]]]
+practice_answers = [[["operating system", "OS"],
+                     ["hardware"],
+                     ["computer"],
+                     ["stores", "keeps", "deposits", "saves", "hoards"]],
+                    [["0"],
+                     ["1"],
+                     ["Artificial"],
+                     ["intelligence"],
+                     ["thought"]],
+                    [["internet"],
+                     ["server"],
+                     ["ISP"],
+                     ["FTP","HTTP","HTTPS","TCP","UDP","POP","SSL","SSH"],
+                     ["FTP","HTTP","HTTPS","TCP","UDP","POP","SSL","SSH"],
+                     ["FTP","HTTP","HTTPS","TCP","UDP","POP","SSL","SSH"]],
+                    [["i"],
+                     ["O"],
+                     ["S"],
+                     ["i"],
+                     ["Phones"]]]
 
-easy_answers = [[["a"], ["b"], ["c"], ["d"]]]
+#practice_answers = [[["Yes1" , "yes2"], ["b"], ["c"], ["d","dd","ddd"], ["e"] ,["Pula"]]]
 
-medium_answers = [[["a"], ["b"], ["c"], ["d"]]]
+easy_answers = [[["world"],
+                 ["Python"],
+                 ["print"],
+                 ["html"],
+                 ["Turing"],
+                 ["language"]],
+                [["level"],
+                 ["Comments"],
+                 ["function", "variable"],
+                 ["true"]]]
+                 
+medium_answers = [[["oriented"],
+                   ["classes"],
+                   ["methods"],
+                   ["library"],
+                   ["December"]],
+                  [["function"],
+                   ["arguments", "operands"],
+                   ["None"],
+                   ["list"]]]
 
-hard_answers = [[["a"], ["b"], ["c"], ["d"]]]
+hard_answers = [[["Python"],
+                 ["interpreted"],
+                 ["language"],
+                 ["Java", "JavaScript", "Ruby" ,"Forth", "Perl", "R", "J", \
+                  "Lisp", "Maple", "Haskell", "DM", "Ant", "Groovy", "REXX" , \
+                  "Tcl", "Spin", "Oriel", "PostScript", "S-Lang", "Lua", \
+                  "VBScript", "Tea", "LPC", "MUMPS", "Mathematica"],
+                 ["type"],
+                 ["variables"],
+                 ["oriented"],
+                 ["definition", "definitions" , "declaration" , "declarations"],
+                 ["inheritance"],
+                 ["access"],
+                 ["C++", "C#", "Java", "PHP"]],
+                [["Python"],
+                 ["functions"],
+                 ["class"],
+                 ["variables"],
+                 ["quick"],
+                 ["running"],
+                 ["compiled"],
+                 ["C"],
+                 ["extensions"],
+                 ["optimised"],
+                 ["package"],
+                 ["crunching"]]]
+                 
 
 insane_answers = [[["a1"], ["b"], ["c"], ["d"], ["e"]], \
                   [["a"], ["b2"], ["c"], ["d"], ["e"]], \
@@ -127,12 +250,15 @@ def print_current_score(score, points):
     else:
         print "Correct ! \nYou won %d points ! " % (points) + current
 
-def update_player_status(lives, score, points, isCorrect):
+def init_player_stats():
+    return 0, MAX_POINTS, NUMBER_OF_GUESSES
+
+def update_player_stats(lives, score, points, isCorrect):
     if isCorrect == True:
         print_current_score(score, points)
         lives = NUMBER_OF_GUESSES
         score += points
-        points = lives
+        points = MAX_POINTS
     else:
         lives -= 1
         if lives > 0:
@@ -232,14 +358,14 @@ def game_result(words, score, lives):
 
 def check_answer(answer, index):
     response = get_player_input(index).lower()
-    if response in answer[index]:
-        return True, response
+    for anAnswer in answer[index]:
+        if response in [ anAnswer.lower() ]:
+            return True, anAnswer
     return False, None
 
 def play(sentence, answer):
     index = 0
-    score = 0 
-    points = lives = NUMBER_OF_GUESSES
+    score, points, lives = init_player_stats()
     words = sentence.split()
     #print words
     while index < len(answer) and lives > 0:
@@ -247,7 +373,7 @@ def play(sentence, answer):
         if found_in(words, target):
             print_paragraph(" ".join(words))
             answerIsGood, theAnswer = check_answer(answer, index)
-            lives, score, points = update_player_status( \
+            lives, score, points = update_player_stats( \
                                lives, score, points, answerIsGood)
             if answerIsGood == True:
                 index = update_game(words, target, answer, theAnswer, index)
