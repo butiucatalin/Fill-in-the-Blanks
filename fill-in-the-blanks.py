@@ -5,6 +5,8 @@ from collections import OrderedDict
 
 NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES = 5
 
+MAX_GUESSES = 100
+
 MAX_POINTS = 5
 
 BLANKS_LIMIT = 1000
@@ -190,7 +192,7 @@ def keep_playing():
     choice = raw_input("Do you want to start a new game ? (y/n) : ")
     while choice.lower() != 'y' and choice.lower() != 'n':
         print "That's not an optin !\n", \
-              "Type "'y'" to start a new game or "'n'" to exit !"
+              "Type \'y\' to start a new game or \'n\' to exit !"
         choice = raw_input("Try again ? (y/n) : ")
     if choice.lower() == 'y':
         return True   
@@ -253,9 +255,31 @@ def print_current_score(score, points):
     else:
         print "Correct ! \nYou won %d points ! " % (points) + current
 
+def choose_guesses_number():
+    choice = raw_input("Do you want to choose how many wrong gusses " \
+                       "you can make ? (y/n) : ")
+    while choice.lower() != 'y' and choice.lower() != 'n':
+        print "That's not an optin !\nType \'y\' if you want to choose " \
+              "that or \'n\' to use the game defaults !"
+        choice = raw_input("Try again ? (y/n) : ")
+    if choice.lower() == 'y':
+        while True:
+            number = raw_input("Select the number of lives : ")
+            try:
+                assert (number != None and number.isdigit() == True and \
+                        int(number) > 0 and int(number) <= MAX_GUESSES )
+                return int(number)
+            except AssertionError:
+                print "Please enter a valid number between 1 and %d !" \
+                    % (MAX_GUESSES)
+    return None     
+
 def init_player_stats(level):
     global NUMBER_OF_GUESSES
-    if level in lifeVariations:
+    chosen_number = choose_guesses_number()
+    if chosen_number != None:
+        NUMBER_OF_GUESSES = chosen_number
+    elif level in lifeVariations:
         NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES + lifeVariations[level]
     else:
         NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES
