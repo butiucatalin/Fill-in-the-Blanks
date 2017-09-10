@@ -1,15 +1,54 @@
 #FILL-IN-THE-BLANKS
+"""Simple console Python Fill-in-the-Blanks Game.
+
+This game has up to five levels and asks the player to answer in the
+Python and general computer science related language trivia.
+
+Immediately after running the program, user is prompted to select a
+difficulty level from the available difficulty levels .
+Once a level is selected, game displays a fill-in-the-blank and a
+prompt to fill in the first blank.
+
+It is not required to have a single right answer for each of the blanks .
+We may have a list of correct answers the player can guess from .
+
+When player guesses correctly, new prompt shows with correct answer
+in the previous blank and a new prompt for the next blank .
+When players guess incorrectly, they are prompted to try again .
+The players can also decide at the beginning how many wrong guesses
+they can make before they love . The game has a scoring system too .
+
+"""
 
 from random import randint
-from collections import OrderedDict
+from collections import OrderedDict #to use the ordered dictionay
 
 NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES = 5
+# NUMBER_OF_GUESSES represents the number of guesses players can make
+# before they lose and initially is set at its default value
+# STANDARD_NUMBER_OF_GUESSES . Value of NUMBER_OF_GUESSES cand be
+# modified throughout the game , but STANDARD_NUMBER_OF_GUESSES
+# remains a constant 
 
 MAX_GUESSES = 100
+# NUMBER_OF_GUESSES stores the maximum number of guesses a player is
+# allowed to choose
 
 MAX_POINTS = 5
+# maximum number of points a player can get after a right answer
 
 BLANKS_LIMIT = 1000
+# the number of blanks in a sentence is limited to this value
+#
+#          ~ DATA STRUCTURES ~
+# 
+# Data structures were designed in such a way that new functionality could
+# easily be added in the future .
+# For each level there is a list of sentences with blanks ( eg:
+# practice_sentences , easy_sentences , medium_sentences , hard_sentences ,
+# insane_sentences ) . Each of these lists has several sentences the game
+# can randomly chose from , every time a new game or level starts . New
+# sentences could be added in ( or removed from ) the lists .
 
 practice_sentences = ["The _____1_____ is the program that manages the " \
                     "___2___ of the computer system, including the CPU, " \
@@ -85,6 +124,26 @@ insane_sentences = ["Use _1_2____ when you aren't sure how many __3__ are " \
                   "__8__ as __7__ __3__. The identifiers ____2_ and ____6_ " \
                   "are a convention, you could also use _1_9____ and " \
                   "_1_1_10_____ but that would not be wise."]
+
+# Answers are also grouped like sentences .
+# For each level there is a list of answers .
+# The following lists are all nested lists , each of them containing a list of
+# answers for the corresponding sentence . Than , each of these inner lists has
+# a list of solutions for every blank of the sentence . Finally , a solution
+# ( the innermost list ) is a list of strings whose elements a specific blank
+# can be replaced with . A list of strings it's been used instead of a single
+# solution , because synonyms and multiple choices are allowed .
+# A general structure of these lists :
+#   [[[s1,s2,...,sn],[s1,s2,...,sm], .... ], [[...],[...],... ] , ... ]
+#   |||__________|                        |                           |
+#   |||     |                             |                           |
+#   ||  solutions for a blank ( strings ) |                           |
+#   ||____________________________________|                           |
+#   |                |                                                |
+#   |       answers for a sentence ( covering all the blanks )        |
+#   |_________________________________________________________________|
+#                                   |
+#     answers for a specific level ( for all sentences in that level )
 
 practice_answers = [[["operating system", "OS"],
                      ["hardware"],
@@ -167,6 +226,18 @@ insane_answers = [[["*"],
                    ["bob"],
                    ["billy"]]]
 
+# Dictionaries are used to map levels ( each level its own key eg: level
+# name ) to their corrensponding lists of sentences and answers . Thus a
+# link is also created between sentences and answers .
+#      mySentences[level][i]    => ....... myAnswers[level][i]
+# So : the i-th element of myAnswers[level] stores the answers for the
+# corrensponding i-th element of mySentences[level] , where "level" in
+# the name( also the key ) of the underlying level .
+# Requirements :
+#      len(myAnswers[level]) >= len(mySentences[level])
+# In other words , there must be a list of answers for each of the sentences
+# in one particular level .
+
 mySentences = OrderedDict([
              ("practice" , practice_sentences),
              ("easy"     , easy_sentences),
@@ -174,6 +245,9 @@ mySentences = OrderedDict([
              ("hard"     , hard_sentences),
              ("insane"   , insane_sentences)
             ])
+# An ordered dictionary is used in this case because it's better to list the
+# level names ( dictionary's keys ) to the user in a desired way , not in the
+# way the keys are sorted by the hashing algorithm .
 
 myAnswers = {
              "practice" : practice_answers,
@@ -187,10 +261,20 @@ lifeVariations = {
                   "hard"   : -1,
                   "insane" : -2,
                   }
+# NUMBER_OF_GUESSES can be altered with various amounts , based on levels
 
 def keep_playing():
+    """This function prompts the user to chose if he wants to start a new
+game , after a previous game has finished .
+    Inputs : (-)
+    Outputs : True or False
+    Postconditions :
+        Function returns True if the player wants to start another game
+    and False otherwise .
+"""
     choice = raw_input("Do you want to start a new game ? (y/n) : ")
     while choice.lower() != 'y' and choice.lower() != 'n':
+        # reprompts until the user enters 'y' or 'n'
         print "That's not an optin !\n", \
               "Type \'y\' to start a new game or \'n\' to exit !"
         choice = raw_input("Try again ? (y/n) : ")
@@ -199,20 +283,44 @@ def keep_playing():
     return False
 
 def choice_message(sentences):
+    """Returns a formatted string representing the names of the game's levels
+stored as keys in our ordered dictionary . This gives flexibility to the
+program . Levels can be added or removed , without changing other functions .
+    Inputs : sentences
+    Preconditions :
+        sentences is an ordered dictionary and has at least one key
+    Outputs : message
+    Postconditions :
+        message is a string with proper formatting
+"""
     myKeys = sentences.keys()
+    #get the list of dictionary's keys
     message = myKeys[0]
     index = 1
     while index < len(myKeys) - 1:
         message = message + ", " + myKeys[index]
         index += 1
     message = message + " and " + myKeys[index] + ".\n"
+    #construncting the message
     return message
         
 def choose_level(sentences):
+    """Prompts the user to choose a level , and returns that chosen level
+along with a random index pointing to a specific sentence from that level's
+list of sentences
+    Inputs : sentences
+    Preconditions :
+        sentences is an ordered dictionary and has at least one key
+    Outputs : tuple (level, index)
+    Postconditions :
+        level is one of the dictionary's keys
+        0 <= index < len(sentences[level])
+"""
     while True:
         level = raw_input("Please select a game difficulty by typing it in !" \
               + "\nPossible choices include " + choice_message(sentences))
         if level in sentences:
+            # prompts until the chosen level is a key in the dictionary
             break
         else:
             print "That's not an option !"
@@ -220,6 +328,15 @@ def choose_level(sentences):
     return level, randint(0, len(sentences[level]) - 1)
 
 def valid_data(sentences, answers):
+"""Checks the consistency of our data structures and returns False if
+inconsistend data is found : a key is found only in the ordered dictionary or
+there is an empty value ( no data ) in one of the dictionaries
+    Inputs : sentences , answers
+    Preconditions :
+        sentences is an ordered dictionary and has at least one key
+        answers is a dictionary
+    Outputs : True or False
+"""
     for key in sentences:
         if ( (not key in answers) or
              (len(sentences[key]) == 0) or
