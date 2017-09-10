@@ -328,7 +328,7 @@ list of sentences
     return level, randint(0, len(sentences[level]) - 1)
 
 def valid_data(sentences, answers):
-"""Checks the consistency of our data structures and returns False if
+    """Checks the consistency of our data structures and returns False if
 inconsistend data is found : a key is found only in the ordered dictionary or
 there is an empty value ( no data ) in one of the dictionaries
     Inputs : sentences , answers
