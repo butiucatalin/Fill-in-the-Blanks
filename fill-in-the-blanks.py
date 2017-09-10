@@ -22,7 +22,6 @@ they can make before they love . The game has a scoring system too .
 
 from random import randint
 from collections import OrderedDict #to use the ordered dictionay
-
 NUMBER_OF_GUESSES = STANDARD_NUMBER_OF_GUESSES = 5
 # NUMBER_OF_GUESSES represents the number of guesses players can make
 # before they lose and initially is set at its default value
@@ -294,14 +293,14 @@ program . Levels can be added or removed , without changing other functions .
         message is a string with proper formatting
 """
     myKeys = sentences.keys()
-    #get the list of dictionary's keys
+    # get the list of dictionary's keys
     message = myKeys[0]
     index = 1
     while index < len(myKeys) - 1:
         message = message + ", " + myKeys[index]
         index += 1
     message = message + " and " + myKeys[index] + ".\n"
-    #construncting the message
+    # construncting the message
     return message
         
 def choose_level(sentences):
@@ -346,6 +345,18 @@ there is an empty value ( no data ) in one of the dictionaries
     return True                            
 
 def exist_answers(answerList, number):
+    """Verifies if there are any answers available for the chosen level and
+randomly selected sentence
+    Inputs : answerList, number
+    Preconditions :
+        answerList is a list
+        answerList = [[[s1,s2,...,sn],[s1,s2,...,sm], .... ],
+        [[...],[...],... ] , ... ]
+        len(answerList) > number
+    Outputs : True or False
+    Postconditions :
+        True , if len(answerList[number]) > 0
+"""    
     try:
         assert (len(answerList) > number and len(answerList[number]) > 0)
         return True
@@ -354,6 +365,13 @@ def exist_answers(answerList, number):
     return False
 
 def print_paragraph(paragraph, current = True):
+    """As the game progresses , this function prints the parapraph with blanks
+replaced by the player's inputs. Finally , it prints the final solution .
+    Inputs : paragraph , current(boolean)
+    Preconditions :
+        paragraph is a string
+    Outputs : (-)
+"""
     if current == True:
         print "The current paragraph reads as such :\n"
     else:
@@ -361,11 +379,21 @@ def print_paragraph(paragraph, current = True):
     print 30*"-" + "\n" + paragraph + "\n" + 30*"-" + "\n"
 
 def get_player_input(number):
+    """Reads an input from the player as he tries to guess the answer for the
+blank number 'number + 1' . In the list , blanks are indexed starting from 0 ,
+that's why we have to use 'number + 1' when we refer to the current blank
+    Inputs : number
+    Outputs : (-)
+"""
     response = raw_input("What should be substituted in for _" \
                          + str(number + 1) + "_ ?  ")
     return response
 
 def print_current_score(score, points):
+    """Shows player's current score and the latest number of points won
+    Inputs : score, points
+    Outputs : (-)
+"""
     current = "Your current score is : %d\n" %(score + points)
     if points == 1:
         print "Correct ! \nYou won 1 point ! " + current
@@ -373,6 +401,15 @@ def print_current_score(score, points):
         print "Correct ! \nYou won %d points ! " % (points) + current
 
 def choose_guesses_number():
+    """Lets the users decide how many wrong guesses they can make before
+they lose . Variable 'number' will store that inormation
+    Inputs : (-)
+    Outputs : number or None
+    Postconditions :
+        'number' is returned if the user wants to choose , otherwise None is
+returned
+        1 <= number <= MAX_GUESSES
+"""
     choice = raw_input("Do you want to choose how many wrong gusses " \
                        "you can make ? (y/n) : ")
     while choice.lower() != 'y' and choice.lower() != 'n':
@@ -385,6 +422,7 @@ def choose_guesses_number():
             try:
                 assert (number != None and number.isdigit() == True and \
                         int(number) > 0 and int(number) <= MAX_GUESSES )
+                # checks if the input is number ( and a valid one ! )
                 return int(number)
             except AssertionError:
                 print "Please enter a valid number between 1 and %d !" \
@@ -392,7 +430,20 @@ def choose_guesses_number():
     return None     
 
 def init_player_stats(level):
+    """Initialise some of the game stats ( is used when a new game starts )
+like : initial score , number of lives , numer of point / right answer ,
+according to user's preferences in some cases ( eg: umber of guesses )
+    Inputs : level
+    Outputs : tuple (score, points, lives)
+    Postconditions :
+        score = 0
+        points = MAX_POINTS
+        lives is set according to user's preferences or game's default for
+    this particular 'level'
+"""
     global NUMBER_OF_GUESSES
+    # global is used because we want to change the value of a global variable
+    # inside a defined function
     chosen_number = choose_guesses_number()
     if chosen_number != None:
         NUMBER_OF_GUESSES = chosen_number
@@ -404,6 +455,23 @@ def init_player_stats(level):
     return 0, MAX_POINTS, NUMBER_OF_GUESSES
 
 def update_player_stats(lives, score, points, isCorrect):
+    """Updates the player stats(lives, score, points) during the game , based
+on the correctness of the player's answers
+    Inputs : lives, score, points, isCOrrect(bolean)
+        lives => stores the player's remaining lives ( number of guesses )
+        score => keeps track of the player's score
+        points => number of points to be added to the score in case of a
+                    right answer
+    Outputs : tuple(lives, score, points)
+    Postconditions :
+        if isCorrect = True =>
+            lives = NUMBER_OF_GUESSES
+            score = score + points
+            points = MAX_POINTS
+        else =>
+            lives = lives - 1
+            points = points - 1 ( if points > 0 )
+"""
     if isCorrect == True:
         print_current_score(score, points)
         lives = NUMBER_OF_GUESSES
@@ -414,20 +482,41 @@ def update_player_stats(lives, score, points, isCorrect):
         if lives > 0:
             print "That isn't the correct answer!  Let's try again; " \
                   + "You have %d tries left!" % (lives)
+            # prompts the player if there are any lives left
         if points > 0:
             points -= 1
     return lives, score, points
 
 def nearby_blank(word, start, maxBlank, toRight):
+    """Checks if another blank can be found inside the string 'word' , starting
+right at the 'start' position and moving towards the specified direction ( to
+the right or to the left ).
+    A blank is defined as a substring consisting of a number followed by
+underscores ( minimum 1 undescore and only underscores ! ) on each side of
+the number . Examples :
+            _1_ ; __5__ ; _7_______ ; _____9__ ; ___10____ ; __11___________
+    Inputs : word, start, maxBlank, toRight(boolean)
+    Preconditions :
+        word is a string
+        0 <= start < len(word)
+    Outputs : True or False ( whether or not a nerby blank is found )
+    Postconditions :
+        If found , the blank have to be a valid one : its number must be
+        lower than maximum number of blanks in the current sentence
+    This function solves the case where blanks ar enot properly separated
+one from another .
+"""
     number = 0
     prod = 1
     if(toRight):
+        # searching to the right
         while start < len(word) and word[start].isdigit() and number<maxBlank:
             number = 10 * number + (int)(word[start])
             start += 1
         if start < len(word) and number <= maxBlank and word[start] == '_':
             return True
     else:
+        # searching to the left
         while start >= 0 and word[start].isdigit() and number<maxBlank:
             number += prod * int(word[start])
             prod *= 10
@@ -437,50 +526,134 @@ def nearby_blank(word, start, maxBlank, toRight):
     return False
     
 def left_blank_edge(word, start, maxBlank):
+    """Finds the left edge of the current blank ( blanks doesn't have a fixed
+number of underscores ! ) starting from 'start' position
+    Inputs : word, start, maxBlank
+    Preconditions :
+        word is a string
+        0 <= start < len(word)
+    Outputs :
+        leftEdge
+    Postconditions :
+        leftEdge = position of the blank's left edge
+"""
     while start >= 0 and word[start] == '_':
+        # search until there's no more undescors or the string is over
         start -= 1
     if start < 0:
         return 0
     if nearby_blank(word, start, maxBlank, False):
+        # if there's a blank to the left , than in this case it should have
+        # only one undescore to the right , so that undescore has to be kept
+        # and not overwritten by the user inputs => start = start + 2
         return start + 2
     return start + 1
 
 def right_blank_edge(word, start, maxBlank):
+    """Finds the right edge of the current blank ( blanks doesn't have a fixed
+number of underscores ! ) starting from 'start' position
+    Inputs : word, start, maxBlank
+    Preconditions :
+        word is a string
+        0 <= start < len(word)
+    Outputs :
+        rightEdge
+    Postconditions :
+        rightEdge = position of the blank's right edge
+"""
     while start < len(word) and word[start] == '_':
+        # search until there's no more undescors or the string is over
         start += 1
     if start >= len(word):
         return len(word) - 1
     if nearby_blank(word, start, maxBlank, True):
+        # if there's a blank to the right , than in this case it should have
+        # only one undescore to the left , so that undescore has to be kept
+        # and not overwritten by the user inputs => start = start - 2
         return start -2
     return start - 1
 
 def replace_blank(word, target, newString, maxBlank):
+    """Replaces with 'newString' all the occurrences of the 'target'
+blank within the 'word' string . Edges of the 'target' are to be found later
+and that larger substring ( from left edge to right edge ) will be replaced
+by 'newString' substring given as user input .
+    Inputs : word, target, newString, maxBlank
+    Preconditions :
+        word is a string
+        target is a valid blank ( a string also )
+        newString is a string
+    Outputs : word
+    Postconditions :
+        word is modified as mentioned in the description
+"""
     startIndex = 0
+    #start at the beginning
     findPosition = 0
     while True:
         findPosition = word.find(target, startIndex)
+        #search for the target string ( from position startIndex )
         if findPosition == -1:
+            # exit when the target cannot be found anymore
             break
         leftIndex = left_blank_edge(word, findPosition, maxBlank)
         rightIndex = right_blank_edge(word, \
                                       findPosition + len(target) -1 , maxBlank)
+        # finding the extent of the blank ( the replacement area )
         word = word[:leftIndex] + newString + word[(rightIndex + 1):]
+        # replace
         startIndex = leftIndex + len(newString)
+        # jump to the right side of the replacement and continue searching
     return word
 
 def found_in(words, target):
+    """Checks if there is a sequence(substring) 'target' within the strings of 
+the list 'words'
+    Inputs : words , target
+    Preconditions :
+        words is a list of strings
+        target is a string
+    Outputs : True or False
+    Postconditions :
+        True , if at teast one of the strings in 'words' contains the
+        substring 'target'
+        False , otherwise
+"""
     for word in words:
         if word.find(target) != -1:
             return True
     return False
 
 def update_game(words, target, answer, theAnswer, index):
+    """Replaces with 'theAnswer' al the occurrences of blank 'target' within
+the words list( the list of words in the current parapraph ) , updates the
+'words' list and moves on to the next blank( increments the index )
+    Inputs : words, target, answer, theAnswer, index
+    Preconditions :
+        words is a list of strings
+        target is a blank
+        theAnswer is a string
+        0 <= index < len(answer)
+        index = number of the current blank
+    Outputs :
+        words ; index
+    Postconditions :
+        index = number of the next blank
+"""
     for i in range(0, len(words)):
         words[i] = replace_blank(words[i], target, \
                                  theAnswer, min(BLANKS_LIMIT, len(answer)))
     return index + 1
 
 def game_result(words, score, lives):
+    """Returns the game results and prints a message accordingly . If the
+player lost ( used all guesses available ) than game is over , otherwise prints
+the final corret paragraph with all of the blanks filled .
+    Inputs : words, score, lives
+    Outputs : score or None
+    Postconditions :
+        return None if lives = 0 , else returns the score
+"""
     if lives == 0:
         print "You've failed too many straight guesses!  Game over!\n"
         return None
@@ -489,6 +662,16 @@ def game_result(words, score, lives):
         return score
 
 def check_answer(answer, index):
+    """Asks for a solution and checks if the user's input cand be found
+in the list of solutions for the current blank ( represented by 'index' )
+    Inputs : answer , index
+    Preconditions :
+        0 <= index < len(asnwer)
+    Outputs : tuple(True or False , anAnswer , None )
+    Postconditions :
+        if the response is right ( is found in the list ) , than return True
+        and anAnswer ; anAnswer = solution written with proper capitalisation
+"""
     response = get_player_input(index).lower()
     for anAnswer in answer[index]:
         if response in [ anAnswer.lower() ]:
@@ -496,23 +679,41 @@ def check_answer(answer, index):
     return False, None
 
 def play(sentence, answer, level):
+    """Let the user play the game after the level have been chosed
+    Inputs : sentence, answer, level
+    Preconditions :
+        there is a number 0 <= i < len(mySentences) such that :
+        sentence = mySentences[level][i] and
+        answer = myAnswers[level][i]
+    Outputs : score or None
+    Postconditions :
+        returns the score if the player have won , else returns None
+"""        
     index = 0
     score, points, lives = init_player_stats(level)
     words = sentence.split()
+    # split the sentence into words
     while index < len(answer) and lives > 0:
         target = "_" + str(index + 1) + "_"
+        # creating the blueprint of the balnk ( number index + 1 )
         if found_in(words, target):
+            # if the blank is found , the user is prompted
             print_paragraph(" ".join(words))
             answerIsGood, theAnswer = check_answer(answer, index)
             lives, score, points = update_player_stats( \
                                lives, score, points, answerIsGood)
             if answerIsGood == True:
+                # update the game if answer is good
                 index = update_game(words, target, answer, theAnswer, index)
         else:
             index += 1
     return game_result(words, score, lives)
 
 def print_final_score(score):
+    """Prints the final score in a preformatted way .
+    Inputs : score
+    Outputs : (-)
+"""
     if score == 1:
         print "Congratulations ! You won ! \n" \
                   + "Your final score is : 1 point . \n"
@@ -521,7 +722,14 @@ def print_final_score(score):
                   + "Your final score is : %d points . \n" % (score)
 
 def play_game(sentences, answers):
-    """ Doctrgings
+    """The main function ! Starts new games and asks the user to chose a
+different level and other options for each of them until the player
+decides to quit the game .
+    Inputs : sentences, answers
+    Preconditions :
+        sentences, answers are dictionaries
+        valid_data(sentences, answers) must return True
+    Outputs : (-)
     """
     print "Welcome to FILL-IN-THE-BLANKS !\n"
     if not valid_data(sentences, answers):
@@ -529,6 +737,7 @@ def play_game(sentences, answers):
     while True:
         print "\nNew game starting .... Good luck !\n"
         level, variant = choose_level(sentences)
+        # selects the level and the random variant
         if not exist_answers(answers[level], variant):
             break
         score = play(sentences[level][variant], answers[level][variant], level)
